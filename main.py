@@ -6,13 +6,13 @@ from result_parser import ResultParser
 import os
 
 path = ""
-datasets = ['FB15k-237']
+datasets = ['wikidata_300k','FB15k-237']
 interested_attributes = ['Head Coverage', "Std Confidence", "PCA Confidence"]
 
 for dataset in datasets:
     for attr in interested_attributes:
         print("==========")
-        print("To process {} {}".format(datasets, attr))
+        print("To process {} {}".format(dataset, attr))
         print("==========")
 
         handler = TuplesHandler(dataset, attr)
@@ -29,7 +29,7 @@ for dataset in datasets:
 
         for x in ["0.10", "0.20", "0.30", "0.40", "0.50", "0.60", "0.70", "0.80", "0.90", "1.00"]:
             buffer = parser.parse_amie_output(os.path.join(path, dataset, "{}_{}.txt".format(dataset, x)))
-            result[x] = buffer[x]
+            result[x] = buffer[attr]
             print("{} has been parsed.".format(x))
 
         result.to_csv(os.path.join(path, dataset, "{}_{}.csv".format(dataset, attr)))
