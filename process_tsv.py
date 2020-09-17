@@ -10,7 +10,7 @@ class TuplesHandler:
         Object takes samples based on statistics from AMIE output in tsv format, and generates new samples in different
         size.
     '''
-    def __init__(self, dataset_name, target_attribute, sample_size_for_extremes=5):
+    def __init__(self, dataset_name, target_attribute, sample_size_for_extremes=10):
         '''
         :param dataset_name: string, used to identify the directory of the file 
         :param target_attribute: string, "Head Convergence"
@@ -37,8 +37,10 @@ class TuplesHandler:
         '''
         self.AMIE_file.sort_values(self.target_attribute, ascending=False, inplace=True)
 
-        largest_tuples = self.AMIE_file.iloc[:self.sample_size_for_extremes]
-        smallest_tuples = self.AMIE_file.iloc[-self.sample_size_for_extremes:]
+        largest_tuples = self.AMIE_file.iloc[:self.sample_size_for_extremes*3]
+        largest_tuples = largest_tuples.sample(n=self.sample_size_for_extremes, axis=0)
+        smallest_tuples = self.AMIE_file.iloc[-self.sample_size_for_extremes*3:]
+        smallest_tuples = smallest_tuples.sample(n=self.sample_size_for_extremes, axis=0)
 
         remaining_tuples = self.AMIE_file.iloc[self.sample_size_for_extremes:-self.sample_size_for_extremes]
         middle_tuples = remaining_tuples.sample(n=self.sample_size_for_extremes, axis=0)
@@ -101,7 +103,7 @@ class TuplesHandler:
 
 
 if __name__ == "__main__":
-    for dataset in ['wikidata_300k',]:
+    for dataset in ['FB15k-237', ]:
         print("==========Sampling {}==========".format(dataset))
         handler = TuplesHandler(dataset, "Head Coverage")
         handler.sample()

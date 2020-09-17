@@ -1,10 +1,8 @@
 from process_tsv import TuplesHandler
 import pandas as pd
 import os
-from numpy import nan
 
 path = ""
-
 
 class ResultParser:
     '''parse the result from amie output'''
@@ -30,7 +28,11 @@ class ResultParser:
                 if line[0] == '?':  # data line starts with ? e.g. ?a
                     split_lines = line.split()
                     for index, row in self.selected_rules.iterrows():
-                        if is_contain_relations(row['Relations']):
+                        # if is_contain_relations(row['Relations']):
+                        #     value = float(split_lines[self.target_attribute_indexes[self.target_attribute]])
+                        #     self.selected_rules.loc[index, self.target_attribute] = value
+                        #     break
+                        if row['Rule'] in line:
                             value = float(split_lines[self.target_attribute_indexes[self.target_attribute]])
                             self.selected_rules.loc[index, self.target_attribute] = value
                             break
@@ -45,7 +47,8 @@ if __name__ == '__main__':
     parser = ResultParser(dataset, target_attribute)
     result = parser.selected_rules
     for size in ["0.10", '0.20', "0.30", "0.40", "0.50", "0.60", "0.70", "0.80", "0.90", "1.00"]:
-        buffer = parser.parse_amie_output(os.path.join(path, dataset, "{}_{}.txt".format(dataset, size)))
+        buffer = parser.parse_amie_output(os.path.join(path, dataset, "{}_{}_{}.txt".format(dataset, size,
+                                                                                            target_attribute)))
         result[size] = buffer[target_attribute]
         print("{} has been parsed.".format(size))
     result.to_csv(os.path.join(path, dataset, "result.csv"))

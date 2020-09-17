@@ -1,3 +1,6 @@
+'''
+This module is for automating sampling, re-mining and evaluate tuples based on AMIE+.
+'''
 from process_tsv import TuplesHandler
 from result_parser import ResultParser
 import os
@@ -16,8 +19,8 @@ for dataset in datasets:
         handler.sample()
 
         for x in ["0.10", "0.20", "0.30", "0.40", "0.50", "0.60", "0.70", "0.80", "0.90", "1.00"]:
-            print("Executing AMIE+ ()".format(x))
-            _ = os.system("java -jar amie_plus.jar {}/{}_{}.tsv > ".format(dataset, dataset, x))
+            print("Executing AMIE+ ({})".format(x))
+            _ = os.system("java -jar amie_plus.jar {0}/{0}_{1}.tsv > {0}/{0}_{1}.txt".format(dataset, x))
             print("Finish executing AMIE+")
 
         print("Parsing the result")
@@ -25,7 +28,7 @@ for dataset in datasets:
         result = parser.selected_rules
 
         for x in ["0.10", "0.20", "0.30", "0.40", "0.50", "0.60", "0.70", "0.80", "0.90", "1.00"]:
-            buffer = parser.parse_amie_output(os.path.join(path, dataset, "{}_{}_{}.txt".format(dataset, x, attr)))
+            buffer = parser.parse_amie_output(os.path.join(path, dataset, "{}_{}.txt".format(dataset, x)))
             result[x] = buffer[x]
             print("{} has been parsed.".format(x))
 
